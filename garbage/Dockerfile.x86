@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 golang:latest
+RUN apt update
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt install -y gcc make git binutils libc6-dev gdb sudo vim
+# Create a non-root user
+RUN adduser --disabled-password --gecos '' user
+# Allow the non-root user to use sudo without a password
+RUN echo 'user ALL=(root) NOPASSWD:ALL' > /etc/sudoers.d/user
+# Switch to the non-root user
+USER user
+# Set the working directory
+WORKDIR /home/user
