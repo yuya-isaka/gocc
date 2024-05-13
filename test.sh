@@ -1,15 +1,26 @@
-# !/bin/bash
+#!/bin/bash
 
+# 定義: assert関数
+# 用途: Goプログラムをコンパイルし、指定された入力で実行後、結果を期待値と比較する。
+# 引数:
+#   $1 (expect) - 期待される結果の終了ステータス
+#   $2 (input)  - Goプログラムに渡す入力
 assert() {
-  expect="$1"
-  input="$2"
+  local expect="$1"
+  local input="$2"
 
-  go run main.go "$input" > tmp.s || exit
-  gcc -o tmp tmp.s
+  # Goプログラムを実行し、出力をアセンブリファイルにリダイレクト
+  go run main.go "$input" > tmp.s || exit 1
+
+  # アセンブリファイルをGCCでコンパイル
+  gcc -o tmp tmp.s || exit 1
+
+  # コンパイルされたプログラムを実行
   ./tmp
-  actual="$?"
+  local actual="$?"
 
-  if [ "$actual" = "$expect" ]; then
+  # 結果の検証と出力
+  if [ "$actual" -eq "$expect" ]; then
     echo "$input => $actual"
   else
     echo "$input => got $actual expected $expect"
@@ -17,7 +28,9 @@ assert() {
   fi
 }
 
+# テストケース
 assert 0 0
 assert 42 42
 
-echo OK
+# すべてのテストが成功した場合
+echo "OK"

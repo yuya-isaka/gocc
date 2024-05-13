@@ -8,14 +8,20 @@ import (
 
 func main() {
 	if len(os.Args) != 2 {
-		os.Stderr.WriteString("os.Argsが2ちゃうで")
+		fmt.Fprintln(os.Stderr, "Error: Invalid number of arguments")
+		os.Exit(1)
 	}
-	fmt.Println(".global main")
-	fmt.Println("main:")
+
+	// 第一引数を整数に変換
 	result, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		os.Stderr.WriteString("Atoi失敗")
+		fmt.Fprintln(os.Stderr, "Error: Failed to convert argument to integer")
+		os.Exit(1)
 	}
+
+	// アセンブリコードの出力
+	fmt.Println(".global main")
+	fmt.Println("main:")
 	fmt.Printf("	mov x0, #%d\n", result)
 	fmt.Println("	ret")
 }
